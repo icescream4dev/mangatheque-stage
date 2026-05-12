@@ -7,7 +7,7 @@
 
 ## 🗺️ Vue d'ensemble
 
-Les élèves construisent **leur propre application web** de collection de mangas/animes.
+Les élèves construisent **leur propre application web** de collection de mangas.
 Ils partent d'un fichier HTML quasi-vide et le complètent session après session.
 
 Le backend (PHP/SQLite) et le fichier `api-client.js` sont **fournis** : les élèves n'y touchent pas. Ils se concentrent uniquement sur le HTML et le JavaScript côté navigateur.
@@ -140,7 +140,7 @@ const ID_GROUPE = "groupe-A"; // ou "groupe-B", "groupe-C"...
 | 1:15-1:45 | `innerHTML` : construire du HTML avec JavaScript |
 | 1:45-2:00 | ☕ Pause |
 | 2:00-2:45 | Créer une carte pour chaque manga (image + titre) |
-| 2:45-3:00 | Défi : ajouter le score et le nombre d'épisodes |
+| 2:45-3:00 | Défi : ajouter le score et le nombre de chapitres/tomes |
 
 **Exemple guidé :**
 ```js
@@ -240,7 +240,7 @@ async function chercher() {
 4. Vérifier l'indentation et les accolades/parenthèses
 
 ### Extensions possibles (pour les plus rapides)
-- **Session Bonus : Suivi de Collection (Tomes)** : L'API dispose d'une route `maj_progression` qui permet de sauvegarder le nombre de tomes possédés et lus (paramètres `id`, `id_groupe`, `tome_possede`, `tome_lu`). Les élèves peuvent ajouter des boutons `+` et `-` sur leurs cartes pour mettre à jour ces compteurs en temps réel !
+- **Session Bonus : Suivi de Collection (Tomes)** : L'API dispose d'une route `maj_progression` (et la route `ajouter` accepte `tome_possede` et `tome_lu`). Les élèves peuvent créer une **Popup/Modale** lors de l'ajout pour demander ces infos, et ajouter des **badges interactifs superposés** sur la couverture dans la collection pour mettre à jour ces compteurs !
 - Ajouter une note personnelle à chaque favori
 - Trier la collection par score ou par date
 - Créer un système de tags/catégories
