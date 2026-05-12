@@ -156,7 +156,7 @@ function recherche_externe(array $params): void {
             'id_jikan'  => $anime['mal_id'] ?? 0,
             'titre'     => $anime['title'] ?? 'Sans titre',
             'image_url' => $anime['images']['jpg']['image_url'] ?? '',
-            'synopsis'  => mb_substr($anime['synopsis'] ?? '', 0, 200),
+            'synopsis'  => substr($anime['synopsis'] ?? '', 0, 200),
             'score'     => $anime['score'] ?? 0,
             'episodes'  => $anime['episodes'] ?? 0,
             'type'      => $anime['type'] ?? '',
