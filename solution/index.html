@@ -433,8 +433,8 @@
 
     let mangaEnCours = null;
 
-    function ouvrirModalAjout(btn, mangaEncoded) {
-        mangaEnCours = JSON.parse(decodeURIComponent(mangaEncoded));
+    function ouvrirModalAjout(btn) {
+        mangaEnCours = JSON.parse(decodeURIComponent(btn.dataset.manga));
         mangaEnCours.btnRef = btn;
         
         document.getElementById('modal-title').textContent = mangaEnCours.titre;
@@ -535,7 +535,7 @@
             if (isInCollection) {
                 actionBtn = `<button class="btn-action btn-add added">✓ Ajouté</button>`;
             } else {
-                actionBtn = `<button class="btn-action btn-add" onclick="ouvrirModalAjout(this,'${encodedData}')">⭐ Ajouter</button>`;
+                actionBtn = `<button class="btn-action btn-add" data-manga="${encodedData}" onclick="ouvrirModalAjout(this)">⭐ Ajouter</button>`;
             }
         } else {
             actionBtn = `<button class="btn-action btn-remove" onclick="supprimerManga(${anime.id},this)">🗑 Retirer</button>`;
