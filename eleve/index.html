@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ma Mangathèque</title>
+
+    <!--
+        ╔══════════════════════════════════════════════════════╗
+        ║           🎌  BIENVENUE DANS TA MANGATHÈQUE  🎌      ║
+        ╠══════════════════════════════════════════════════════╣
+        ║                                                      ║
+        ║  Ce fichier est TON point de départ.                 ║
+        ║  Tu vas le modifier petit à petit pour créer         ║
+        ║  ton application de collection de mangas !           ║
+        ║                                                      ║
+        ║  Règle d'or : LIS LES COMMENTAIRES !                ║
+        ║  Ils te guident étape par étape.                     ║
+        ║                                                      ║
+        ╚══════════════════════════════════════════════════════╝
+    -->
+</head>
+<body>
+
+    <!--
+        ══════════════════════════════════════
+        SECTION 1 : L'EN-TÊTE DE TON APPLICATION
+        ══════════════════════════════════════
+
+        Le <h1> est le titre principal de ta page.
+        Tu peux changer le texte entre les balises.
+    -->
+    <h1>🎌 Ma Mangathèque</h1>
+    <p>Bienvenue ! Cette application va te permettre de chercher des mangas et de créer ta collection.</p>
+
+
+    <!--
+        ══════════════════════════════════════
+        SECTION 2 : LA BARRE DE RECHERCHE
+        ══════════════════════════════════════
+
+        TODO (Session 3-4) : Crée ici ta barre de recherche.
+
+        Tu auras besoin de :
+        - Un <input> pour que l'utilisateur tape le nom d'un manga
+        - Un <button> pour lancer la recherche
+
+        Exemple :
+        <input type="text" id="champ-recherche" placeholder="Cherche un manga...">
+        <button id="bouton-recherche">Rechercher</button>
+    -->
+
+
+    <!--
+        ══════════════════════════════════════
+        SECTION 3 : LES RÉSULTATS DE RECHERCHE
+        ══════════════════════════════════════
+
+        TODO (Session 5) : Cette zone affichera les mangas trouvés.
+
+        Tu vas utiliser JavaScript pour remplir cette zone
+        avec les résultats de l'API.
+
+        Pour l'instant, c'est juste un conteneur vide :
+    -->
+    <div id="resultats"></div>
+
+
+    <!--
+        ══════════════════════════════════════
+        SECTION 4 : MA COLLECTION (FAVORIS)
+        ══════════════════════════════════════
+
+        TODO (Session 6) : Cette zone affichera TA collection.
+
+        Quand tu ajoutes un manga à tes favoris,
+        il apparaîtra ici.
+    -->
+    <h2>⭐ Ma Collection</h2>
+    <div id="ma-collection"></div>
+
+
+    <!--
+        ══════════════════════════════════════
+        CHARGEMENT DU CLIENT API
+        ══════════════════════════════════════
+
+        Ce script charge le fichier api-client.js qui contient
+        la fonction appeler_backend().
+
+        ⚠️ NE TOUCHE PAS À CETTE LIGNE ⚠️
+    -->
+    <script src="js/api-client.js"></script>
+
+
+    <!--
+        ══════════════════════════════════════
+        TON CODE JAVASCRIPT
+        ══════════════════════════════════════
+
+        C'est ICI que tu vas écrire ton code JavaScript.
+        Tout ce que tu écris entre <script> et </script>
+        sera exécuté par le navigateur.
+    -->
+    <script>
+
+        // ─────────────────────────────────────
+        //  BOUTON DE TEST
+        // ─────────────────────────────────────
+        //
+        //  Ce code est un exemple pour vérifier que
+        //  la connexion au backend fonctionne.
+        //
+        //  Ouvre la console du navigateur (F12 → Console)
+        //  et clique sur le bouton pour voir le résultat.
+
+        async function testerConnexion() {
+            const reponse = await appeler_backend("recherche_externe", { q: "Naruto" });
+
+            if (reponse.statut === "ok") {
+                alert("✅ Connexion réussie ! " + reponse.resultats.length + " résultats trouvés.");
+                console.log("Résultats :", reponse.resultats);
+            } else {
+                alert("❌ Erreur : " + reponse.message);
+            }
+        }
+
+        // TODO (Session 4) : Remplace ce bouton de test par ta vraie barre de recherche !
+
+    </script>
+
+    <!--
+        Ce bouton appelle la fonction testerConnexion() ci-dessus.
+        Il te permet de vérifier que tout fonctionne.
+        Tu pourras le supprimer quand tu n'en auras plus besoin.
+    -->
+    <button onclick="testerConnexion()">🔌 Tester la connexion au serveur</button>
+
+</body>
+</html>

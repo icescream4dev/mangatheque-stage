@@ -1,0 +1,7 @@
+# Réécriture Apache pour o2switch
+# Toutes les requêtes sont redirigées vers index.php
+
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.php [QSA,L]
