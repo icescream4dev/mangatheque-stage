@@ -228,12 +228,12 @@
     <!-- Header -->
     <header class="header">
         <h1>🎌 Mangathèque</h1>
-        <p>Recherche tes animes préférés et crée ta collection ultime</p>
+        <p>Recherche tes mangas préférés et crée ta collection ultime</p>
     </header>
 
     <!-- Search -->
     <div class="search-container">
-        <input type="text" id="champ-recherche" placeholder="Rechercher un anime... (ex: Naruto, One Piece)" autofocus>
+        <input type="text" id="champ-recherche" placeholder="Rechercher un manga... (ex: Naruto, One Piece)" autofocus>
         <button id="bouton-recherche" onclick="lancerRecherche()">🔍 Rechercher</button>
     </div>
 
@@ -248,7 +248,7 @@
         <div id="resultats" class="grid"></div>
         <div id="message-recherche" class="message-box">
             <span class="emoji">🔍</span>
-            <p>Tape le nom d'un anime dans la barre de recherche pour commencer !</p>
+            <p>Tape le nom d'un manga dans la barre de recherche pour commencer !</p>
         </div>
     </section>
 
@@ -256,7 +256,7 @@
         <div id="ma-collection" class="grid"></div>
         <div id="message-collection" class="message-box">
             <span class="emoji">📭</span>
-            <p>Ta collection est vide. Recherche des animes et ajoute tes favoris !</p>
+            <p>Ta collection est vide. Recherche des mangas et ajoute tes favoris !</p>
         </div>
     </section>
 </div>
@@ -392,7 +392,7 @@
     function carteHTML(anime, mode, index) {
         const delay = index * 60;
         const scoreText = anime.score ? `⭐ ${anime.score}` : '';
-        const epText = anime.episodes ? `${anime.episodes} ep.` : '';
+        const epText = anime.episodes ? `${anime.episodes} ch.` : '';
         const imgSrc = anime.image_url || 'data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 3 4%22><rect fill=%22%2315151f%22 width=%223%22 height=%224%22/><text x=%221.5%22 y=%222.2%22 text-anchor=%22middle%22 font-size=%22.6%22>🎌</text></svg>';
 
         const encodedData = encodeURIComponent(JSON.stringify({

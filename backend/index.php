@@ -127,7 +127,7 @@ function recherche_externe(array $params): void {
         return;
     }
 
-    $url = "https://api.jikan.moe/v4/anime?" . http_build_query([
+    $url = "https://api.jikan.moe/v4/manga?" . http_build_query([
         'q'     => $recherche,
         'limit' => 12,
         'sfw'   => true
@@ -158,7 +158,7 @@ function recherche_externe(array $params): void {
             'image_url' => $anime['images']['jpg']['image_url'] ?? '',
             'synopsis'  => substr($anime['synopsis'] ?? '', 0, 200),
             'score'     => $anime['score'] ?? 0,
-            'episodes'  => $anime['episodes'] ?? 0,
+            'episodes'  => $anime['chapters'] ?? $anime['volumes'] ?? 0,
             'type'      => $anime['type'] ?? '',
             'statut'    => $anime['status'] ?? '',
         ];
