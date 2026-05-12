@@ -57,6 +57,8 @@ try {
             synopsis    TEXT    DEFAULT '',
             score       REAL    DEFAULT 0,
             episodes    INTEGER DEFAULT 0,
+            tome_possede INTEGER DEFAULT 0,
+            tome_lu     INTEGER DEFAULT 0,
             date_ajout  DATETIME DEFAULT CURRENT_TIMESTAMP,
             UNIQUE(id_groupe, id_jikan)
         )
@@ -98,6 +100,10 @@ switch ($route) {
         ma_collection($db, $params);
         break;
 
+    case 'maj_progression':
+        maj_progression($db, $params);
+        break;
+
     default:
         repondre_json([
             "statut"  => "ok",
@@ -106,7 +112,8 @@ switch ($route) {
                 "recherche_externe" => "Chercher un manga (param: q)",
                 "ajouter"           => "Ajouter à ma collection (params: id_jikan, titre, image_url, id_groupe)",
                 "supprimer"         => "Supprimer de ma collection (params: id, id_groupe)",
-                "ma_collection"     => "Voir ma collection (param: id_groupe)"
+                "ma_collection"     => "Voir ma collection (param: id_groupe)",
+                "maj_progression"   => "Mettre à jour la progression (params: id, id_groupe, tome_possede, tome_lu)"
             ]
         ]);
 }
@@ -261,6 +268,42 @@ function ma_collection(PDO $db, array $params): void {
         "id_groupe"  => $id_groupe,
         "total"      => count($collection),
         "collection" => $collection
+    ]);
+}
+
+/**
+ * Met à jour la progression de lecture (tomes possédés / lus).
+ */
+function maj_progression(PDO $db, array $params): void {
+    $id           = intval($params['id'] ?? 0);
+    $id_groupe    = $params['id_groupe'] ?? '';
+    $tome_possede = intval($params['tome_possede'] ?? 0);
+    $tome_lu      = intval($params['tome_lu'] ?? 0);
+
+    if ($id === 0 || $id_groupe === '') {
+        repondre_erreur("Paramètres manquants. Il faut : id, id_groupe.");
+        return;
+    }
+
+    // Sécurité basique : on ne peut pas avoir lu plus de tomes qu'on en possède, 
+    // ou alors on l'accepte (lecture en scan, emprunt). On laisse libre pour l'exercice.
+
+    $stmt = $db->prepare("
+        UPDATE collection 
+        SET tome_possede = :tome_possede, tome_lu = :tome_lu 
+        WHERE id = :id AND id_groupe = :id_groupe
+    ");
+    
+    $stmt->execute([
+        ':tome_possede' => $tome_possede,
+        ':tome_lu'      => $tome_lu,
+        ':id'           => $id,
+        ':id_groupe'    => $id_groupe
+    ]);
+
+    repondre_json([
+        "statut"  => "ok",
+        "message" => "Progression sauvegardée !"
     ]);
 }
 

@@ -240,6 +240,7 @@ async function chercher() {
 4. Vérifier l'indentation et les accolades/parenthèses
 
 ### Extensions possibles (pour les plus rapides)
+- **Session Bonus : Suivi de Collection (Tomes)** : L'API dispose d'une route `maj_progression` qui permet de sauvegarder le nombre de tomes possédés et lus (paramètres `id`, `id_groupe`, `tome_possede`, `tome_lu`). Les élèves peuvent ajouter des boutons `+` et `-` sur leurs cartes pour mettre à jour ces compteurs en temps réel !
 - Ajouter une note personnelle à chaque favori
 - Trier la collection par score ou par date
 - Créer un système de tags/catégories

@@ -167,6 +167,26 @@
         }
         .btn-remove:hover { background:rgba(255,60,60,.25); }
         /* ═══════════════════════════════════════════ */
+        /*  PROGRESSION                                */
+        /* ═══════════════════════════════════════════ */
+        .progress-controls {
+            display:flex; flex-direction:column; gap:6px; margin-top:12px; margin-bottom:12px;
+            background:rgba(0,0,0,0.2); padding:10px; border-radius:var(--radius-sm);
+        }
+        .progress-row {
+            display:flex; align-items:center; justify-content:space-between; font-size:.85rem;
+        }
+        .progress-row span { color:var(--text-secondary); }
+        .progress-actions { display:flex; align-items:center; gap:8px; }
+        .btn-prog { 
+            background:var(--bg-glass); border:1px solid var(--border-glass); 
+            color:#fff; width:24px; height:24px; border-radius:50%; 
+            display:flex; align-items:center; justify-content:center; cursor:pointer;
+            transition:var(--transition); font-weight:bold;
+        }
+        .btn-prog:hover { background:var(--accent-pink); border-color:var(--accent-pink); }
+        .prog-val { font-weight:600; width:24px; text-align:center; }
+        /* ═══════════════════════════════════════════ */
         /*  STATES                                     */
         /* ═══════════════════════════════════════════ */
         .message-box {
@@ -274,6 +294,7 @@
     let ongletActif = 'recherche';
     let collectionIds = new Set(); // IDs Jikan dans la collection (pour état boutons)
     let timerDebounce = null;
+    let timerProgression = {}; // pour le debounce de l'API progression
 
     // ═══════════════════════════════════════════
     //  INIT
@@ -386,6 +407,41 @@
         }
     }
 
+    async function changerProgression(id, deltaPossede, deltaLu, totalTomes) {
+        // Lecture des valeurs actuelles dans le DOM
+        const elPos = document.getElementById(`val-pos-${id}`);
+        const elLu = document.getElementById(`val-lu-${id}`);
+        
+        let actPos = parseInt(elPos.textContent) || 0;
+        let actLu = parseInt(elLu.textContent) || 0;
+        
+        let nouvPos = Math.max(0, actPos + deltaPossede);
+        let nouvLu = Math.max(0, actLu + deltaLu);
+        
+        // Contraintes basiques
+        if (totalTomes > 0) {
+            nouvPos = Math.min(nouvPos, totalTomes);
+            nouvLu = Math.min(nouvLu, totalTomes);
+        }
+        nouvLu = Math.min(nouvLu, nouvPos); // Logique simple: on ne lit pas plus qu'on ne possède
+        
+        // Mise à jour optimiste UI
+        elPos.textContent = nouvPos;
+        elLu.textContent = nouvLu;
+        
+        // Debounce de l'appel API (évite de spammer le serveur si on clique vite)
+        clearTimeout(timerProgression[id]);
+        timerProgression[id] = setTimeout(() => {
+            appeler_backend('maj_progression', { 
+                id: id, 
+                tome_possede: nouvPos, 
+                tome_lu: nouvLu 
+            }).then(r => {
+                if (r.statut === 'ok') toast("Progression sauvegardée", "success");
+            });
+        }, 800);
+    }
+
     // ═══════════════════════════════════════════
     //  CARD HTML
     // ═══════════════════════════════════════════
@@ -404,6 +460,8 @@
         const isInCollection = collectionIds.has(anime.id_jikan);
 
         let actionBtn = '';
+        let progressHTML = '';
+
         if (mode === 'add') {
             if (isInCollection) {
                 actionBtn = `<button class="btn-action btn-add added">✓ Ajouté</button>`;
@@ -412,6 +470,31 @@
             }
         } else {
             actionBtn = `<button class="btn-action btn-remove" onclick="supprimerManga(${anime.id},this)">🗑 Retirer</button>`;
+            
+            const tomePossede = anime.tome_possede || 0;
+            const tomeLu = anime.tome_lu || 0;
+            const tTotal = anime.episodes || 0;
+            const txtTotal = tTotal > 0 ? ` / ${tTotal}` : '';
+            
+            progressHTML = `
+            <div class="progress-controls">
+                <div class="progress-row">
+                    <span>Possédés${txtTotal} :</span>
+                    <div class="progress-actions">
+                        <button class="btn-prog" onclick="changerProgression(${anime.id}, -1, 0, ${tTotal})">-</button>
+                        <span class="prog-val" id="val-pos-${anime.id}">${tomePossede}</span>
+                        <button class="btn-prog" onclick="changerProgression(${anime.id}, 1, 0, ${tTotal})">+</button>
+                    </div>
+                </div>
+                <div class="progress-row">
+                    <span>Lus${txtTotal} :</span>
+                    <div class="progress-actions">
+                        <button class="btn-prog" onclick="changerProgression(${anime.id}, 0, -1, ${tTotal})">-</button>
+                        <span class="prog-val" id="val-lu-${anime.id}">${tomeLu}</span>
+                        <button class="btn-prog" onclick="changerProgression(${anime.id}, 0, 1, ${tTotal})">+</button>
+                    </div>
+                </div>
+            </div>`;
         }
 
         return `
@@ -426,6 +509,7 @@
                     ${scoreText ? `<span class="score">${scoreText}</span>` : ''}
                     ${epText ? `<span>${epText}</span>` : ''}
                 </div>
+                ${progressHTML}
                 <div class="card-actions">${actionBtn}</div>
             </div>
         </div>`;
