@@ -188,6 +188,8 @@ function ajouter(PDO $db, array $params): void {
     $synopsis  = trim($params['synopsis'] ?? '');
     $score     = floatval($params['score'] ?? 0);
     $episodes  = intval($params['episodes'] ?? 0);
+    $tome_possede = intval($params['tome_possede'] ?? 0);
+    $tome_lu      = intval($params['tome_lu'] ?? 0);
 
     if ($id_groupe === '' || $id_jikan === 0 || $titre === '') {
         repondre_erreur("Paramètres manquants. Il faut : id_groupe, id_jikan, titre.");
@@ -196,8 +198,8 @@ function ajouter(PDO $db, array $params): void {
 
     try {
         $stmt = $db->prepare("
-            INSERT INTO collection (id_groupe, id_jikan, titre, image_url, synopsis, score, episodes)
-            VALUES (:id_groupe, :id_jikan, :titre, :image_url, :synopsis, :score, :episodes)
+            INSERT INTO collection (id_groupe, id_jikan, titre, image_url, synopsis, score, episodes, tome_possede, tome_lu)
+            VALUES (:id_groupe, :id_jikan, :titre, :image_url, :synopsis, :score, :episodes, :tome_possede, :tome_lu)
         ");
         $stmt->execute([
             ':id_groupe' => $id_groupe,
@@ -207,6 +209,8 @@ function ajouter(PDO $db, array $params): void {
             ':synopsis'  => $synopsis,
             ':score'     => $score,
             ':episodes'  => $episodes,
+            ':tome_possede' => $tome_possede,
+            ':tome_lu'      => $tome_lu,
         ]);
 
         repondre_json([
