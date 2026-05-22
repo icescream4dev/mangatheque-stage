@@ -1,7 +1,13 @@
 # Réécriture Apache pour o2switch
-# Toutes les requêtes sont redirigées vers index.php
-
 RewriteEngine On
+
+# Cloisonnement : Bloquer l'accès depuis le domaine principal technivore.fr
+# L'API ne doit répondre que sur api.manga.technivore.fr (ou en local)
+RewriteCond %{HTTP_HOST} ^(www\.)?technivore\.fr$ [NC]
+RewriteRule ^ - [F,L]
+
+# Toutes les requêtes sont redirigées vers index.php
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^(.*)$ index.php [QSA,L]
+

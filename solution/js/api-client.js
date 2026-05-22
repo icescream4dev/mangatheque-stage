@@ -32,7 +32,7 @@
 
 // L'adresse du serveur backend.
 // En local avec PHP : php -S localhost:8080 backend/index.php
-const URL_BACKEND = "http://localhost:8080";
+const URL_BACKEND = "https://api.manga.technivore.fr";
 
 // L'identifiant de ton groupe.
 // Chaque groupe a sa propre collection, isolée des autres.
