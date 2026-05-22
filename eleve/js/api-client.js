@@ -77,7 +77,7 @@ async function appeler_backend(route, params = {}) {
         // Pour POST, on envoie les paramètres dans le corps de la requête
         options = {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: { "Content-Type": "text/plain" },
             body: JSON.stringify(params)
         };
     }
