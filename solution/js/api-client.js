@@ -59,10 +59,9 @@ async function appeler_backend(route, params = {}) {
     // On ajoute automatiquement l'identifiant du groupe
     params.id_groupe = ID_GROUPE;
 
-    // Les routes qui LISENT des données utilisent GET
-    // Les routes qui MODIFIENT des données utilisent POST
-    const routesEnLecture = ["recherche_externe", "ma_collection"];
-    const methode = routesEnLecture.includes(route) ? "GET" : "POST";
+    // Pour éviter les blocages de pare-feu et de sécurité (comme les cookies anti-DDoS o2switch
+    // ou les restrictions CORS strictes sur le protocole file://), nous utilisons GET pour toutes les requêtes.
+    const methode = "GET";
 
     let url = URL_BACKEND + "?route=" + route;
     let options = {};
