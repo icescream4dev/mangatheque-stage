@@ -517,7 +517,7 @@
     function carteHTML(anime, mode, index) {
         const delay = index * 60;
         const scoreText = anime.score ? `⭐ ${anime.score}` : '';
-        const epText = anime.episodes ? `${anime.episodes} ch.` : '';
+        const epText = anime.episodes ? `${anime.episodes} tomes` : '';
         const imgSrc = anime.image_url || 'data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 3 4%22><rect fill=%22%2315151f%22 width=%223%22 height=%224%22/><text x=%221.5%22 y=%222.2%22 text-anchor=%22middle%22 font-size=%22.6%22>🎌</text></svg>';
 
         const encodedData = encodeURIComponent(JSON.stringify({
