@@ -149,27 +149,69 @@ function recherche_externe(array $params): void {
     ]);
 
     $reponse = @file_get_contents($url, false, $contexte);
+    $utilise_fallback = false;
+    $donnees = null;
 
-    if ($reponse === false) {
-        repondre_erreur("Impossible de contacter l'API Jikan. Réessaie dans quelques secondes.");
+    if ($reponse !== false) {
+        $donnees = json_decode($reponse, true);
+    }
+
+    // Si Jikan a échoué (réponse fausse, décodage vide ou statut HTTP d'erreur)
+    if ($reponse === false || empty($donnees) || (isset($donnees['status']) && $donnees['status'] >= 400)) {
+        // Fallback sur AniList
+        $query = 'query ($search: String) { Page(page: 1, perPage: 12) { media(search: $search, type: MANGA) { id idMal title { romaji english } coverImage { large } description meanScore volumes } } }';
+        $options = [
+            'http' => [
+                'header'  => "Content-Type: application/json\r\n" .
+                             "Accept: application/json\r\n" .
+                             "User-Agent: Mangatheque-Stage/1.0\r\n",
+                'method'  => 'POST',
+                'content' => json_encode(['query' => $query, 'variables' => ['search' => $recherche]]),
+                'timeout' => 10
+            ]
+        ];
+        $contexte_anilist = stream_context_create($options);
+        $reponse_anilist = @file_get_contents('https://graphql.anilist.co', false, $contexte_anilist);
+
+        if ($reponse_anilist !== false) {
+            $donnees = json_decode($reponse_anilist, true);
+            $utilise_fallback = true;
+        }
+    }
+
+    if ($donnees === null) {
+        repondre_erreur("Impossible de contacter l'API Jikan et l'API de secours AniList. Réessaie dans quelques secondes.");
         return;
     }
 
-    $donnees = json_decode($reponse, true);
-
     // On simplifie les données pour les élèves
     $resultats = [];
-    foreach (($donnees['data'] ?? []) as $anime) {
-        $resultats[] = [
-            'id_jikan'  => $anime['mal_id'] ?? 0,
-            'titre'     => $anime['title'] ?? 'Sans titre',
-            'image_url' => $anime['images']['jpg']['image_url'] ?? '',
-            'synopsis'  => substr($anime['synopsis'] ?? '', 0, 200),
-            'score'     => $anime['score'] ?? 0,
-            'episodes'  => !empty($anime['volumes']) ? $anime['volumes'] : ($anime['chapters'] ?? $anime['volumes'] ?? 0),
-            'type'      => $anime['type'] ?? '',
-            'statut'    => $anime['status'] ?? '',
-        ];
+    if ($utilise_fallback) {
+        foreach (($donnees['data']['Page']['media'] ?? []) as $media) {
+            $resultats[] = [
+                'id_jikan'  => $media['idMal'] ?? $media['id'],
+                'titre'     => $media['title']['english'] ?? $media['title']['romaji'] ?? 'Sans titre',
+                'image_url' => $media['coverImage']['large'] ?? '',
+                'synopsis'  => substr(strip_tags($media['description'] ?? ''), 0, 200),
+                'score'     => round(($media['meanScore'] ?? 0) / 10, 1),
+                'episodes'  => $media['volumes'] ?? 0,
+                'type'      => 'manga',
+                'statut'    => '',
+            ];
+        }
+    } else {
+        foreach (($donnees['data'] ?? []) as $anime) {
+            $resultats[] = [
+                'id_jikan'  => $anime['mal_id'] ?? 0,
+                'titre'     => $anime['title'] ?? 'Sans titre',
+                'image_url' => $anime['images']['jpg']['image_url'] ?? '',
+                'synopsis'  => substr($anime['synopsis'] ?? '', 0, 200),
+                'score'     => $anime['score'] ?? 0,
+                'episodes'  => !empty($anime['volumes']) ? $anime['volumes'] : ($anime['chapters'] ?? $anime['volumes'] ?? 0),
+                'type'      => $anime['type'] ?? '',
+                'statut'    => $anime['status'] ?? '',
+            ];
+        }
     }
 
     repondre_json([
